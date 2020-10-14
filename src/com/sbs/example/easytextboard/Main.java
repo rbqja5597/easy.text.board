@@ -16,7 +16,7 @@ public class Main { // 클래스
 
 		while (true) {
 
-			System.out.printf("명령어) ");
+			System.out.printf("명령어1) ");
 			String command = scanner.nextLine();
 
 			if (command.equals("article add")) {
