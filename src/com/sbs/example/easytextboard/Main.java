@@ -2,12 +2,6 @@ package com.sbs.example.easytextboard; //폴더명은 소문자로 , 해결책 c
 
 import java.util.Scanner;
 
-class Article {
-	public int id;
-	public String title;
-	public String body;
-}
-
 public class Main { // 클래스
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
@@ -70,26 +64,32 @@ public class Main { // 클래스
 				}
 
 			} else if (command.startsWith("article detail ")) {
-				
-				int inpuedID = Integer.parseInt(command.split(" ")[2]); // 두번째 공백의 값 = inpuedId 
+
+				int inputedID = Integer.parseInt(command.split(" ")[2]); // 두번째 공백의 값 = inpuedId
 				System.out.println("== 게시물 상세 ==");
-				
-				if (inpuedID == 1 ) { // 공백의 값이 1일때
+
+				if (inputedID == 1) { // 공백의 값이 1일때
+					if (article1.id == 0) {
+						System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedID);
+						continue;
+					}
+
 					System.out.printf("번호: %d\n", article1.id);
 					System.out.printf("제목: %s\n", article1.title);
-					System.out.printf("내용: %s\n", article1.body);					
-				}
-				else if (inpuedID == 2 ) { // 공백의 값이 2일때
+					System.out.printf("내용: %s\n", article1.body);
+				} else if (inputedID == 2) { // 공백의 값이 2일때
+					
+					if (article2.id == 0) {
+						System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedID);
+						continue;
+					}
+					
 					System.out.printf("번호: %d\n", article2.id);
 					System.out.printf("제목: %s\n", article2.title);
-					System.out.printf("내용: %s\n", article2.body);					
+					System.out.printf("내용: %s\n", article2.body);
+				} else {
+					System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedID);
 				}
-				
-				else if (article1.id == 0 ) {
-					System.out.printf("%d번 게시물은 존재하지 않습니다. \n", inpuedID);
-					continue;
-				}
-				
 
 			} else if (command.equals("article exit")) {
 				System.out.println("== 프로그램 종료 ==");
