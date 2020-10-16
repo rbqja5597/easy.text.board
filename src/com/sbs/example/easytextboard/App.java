@@ -61,7 +61,7 @@ public class App {
 				System.out.println("== 게시물 리스트 ==");
 
 				if (num == 0) {
-					System.out.printf("%d 번 게시물이 없습니다.\n", num);
+					System.out.printf("%d번 게시물이 없습니다.\n", num);
 					continue;
 				}
 				System.out.println("번호 / 제목");
