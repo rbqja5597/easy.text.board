@@ -3,27 +3,24 @@ package com.sbs.example.easytextboard;
 import java.util.Scanner;
 
 public class App {
-	Article article1 = new Article();
-	Article article2 = new Article();
-	Article article3 = new Article();
-	Article article4 = new Article();
-	Article article5 = new Article();
-	Article article6 = new Article();
-	Article article7 = new Article();
-	Article article8 = new Article();
-	Article article9 = new Article();
-	Article article10 = new Article();
+	Article[] articles = new Article[9];
 
 	Article getArticle(int id) {
 		if (id == 1) {
-			return article1;
+			return articles[0];
 		} else if (id == 2) {
-			return article2;
+			return articles[1];
 		}
 		return null;
 	}
 
 	public void run() {
+		
+		for (int i=0; i < articles.length; i++ ) {
+			articles[i] = new Article();
+		}
+		
+		
 		Scanner scanner = new Scanner(System.in);
 
 		int num = 0;
@@ -52,6 +49,8 @@ public class App {
 				num = id;
 
 				Article article = getArticle(id);
+				
+				
 
 				article.id = id;
 				article.title = title;
