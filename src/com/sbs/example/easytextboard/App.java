@@ -25,6 +25,7 @@ public class App {
 		Scanner sc = new Scanner(System.in);
 
 		int num = 0; 
+		int maxArticlesCount = 3;
 
 		while (true) {
 
@@ -33,6 +34,10 @@ public class App {
 
 			if (command.equals("article add")) {
 				System.out.println("== 게시물 등록 ==");
+				if (num >= maxArticlesCount) {
+					System.out.println("더 이상 생성할 수 없습니다.");
+					continue;
+				}
 
 				int id = num + 1; // 0 + 1 
 
