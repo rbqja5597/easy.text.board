@@ -100,7 +100,7 @@ public class App {
 				}
 				System.out.println("번호 / 제목");
 
-				for (int i = 0; i < articlesSize(); i++) {
+				for (int i = articlesSize()-1; i >= 0 ; i--) {
 
 					Article article = articles[i];
 
