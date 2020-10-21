@@ -21,8 +21,8 @@ public class App {
 
 	public void remove(int index) {
 		//System.out.printf("== %d번 좌석 숫자 제거 ==\n", index);
-		for (int i = index + 1 ; i < articlesCount; i++) {
-			articles[i - 1] = articles[i];
+		for (int i = index ; i < articlesCount; i++) {
+			articles[i] = articles[i + 1];
 
 		}
 
@@ -30,7 +30,7 @@ public class App {
 	}
 
 	public int getIndexOf(int num) {
-		for (int i = 0; i < articles.length; i++) {
+		for (int i = 0; i < articlesCount; i++) {
 			if (num == articles[i].id) {
 				return i;
 			}
@@ -40,12 +40,11 @@ public class App {
 
 
 	public void removeByValue(int num) {
-		int index = getIndexOf(num);
-		if (index != -1) {
-			remove(index);
+		int index = getIndexOf(num); /// index = 1 일때 > 
+		if (index != -1) { // index의 값이 -1 과 같지 않을 경우
+			remove(index); // index 값을 remove
 		}
-		
-		
+
 	}
 
 	public void run() {
@@ -60,7 +59,7 @@ public class App {
 
 		Scanner sc = new Scanner(System.in);
 
-		int maxArticlesCount = articles.length;
+		int maxArticlesCount = 3;
 
 		while (true) {
 
