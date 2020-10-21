@@ -23,26 +23,30 @@ public class App {
 	}
 
 	public void remove(int id) {
-		int index = getIndexOf(id); 
-		if (index == -1) { 
-			return; 
+		int index = getIndexOf(id); // ex) id = 1
+		if (index == -1) { // index 가 -1 과 같으면
+			return; // return
 		}
-		for (int i = index + 1; i < articlesSize(); i++) {
-			articles[i - 1] = articles[i];
+		for (int i = index + 1; i < articlesSize(); i++) { // i = 2 , i 가 articlesSize()보다 작을 경우
+			articles[i - 1] = articles[i]; // articles[2 - 1] = articles[i]; = 1
 
 		}
 
 		articlesCount--;
 	}
 
-	public int getIndexOf(int num) {
+	public int getIndexOf(int num) { // ex) 입력된 값 = 1
 		for (int i = 0; i < articlesSize(); i++) {
-			if (num == articles[i].id) {
-				return i;
+			if (num == articles[i].id) { // num = 1 과 articles[i].id 의 값이 같으면
+				return i; // 리턴
 			}
 		}
 		return -1;
 	}
+	
+//	public String regDate() {
+		
+//	}
 
 	public void run() {
 
@@ -131,7 +135,7 @@ public class App {
 				}
 
 				remove(inp);
-				
+
 				System.out.printf("%d번 게시물이 삭제되었습니다.\n", inp);
 
 			} else if (command.startsWith("article modify ")) {
@@ -140,9 +144,31 @@ public class App {
 
 				Article article = getArticle(inp);
 
+				System.out.printf("새 제목: ");
+				String title = sc.nextLine();
+				System.out.printf("새 내용: ");
+				String body = sc.nextLine();
+
 				if (article == null) {
 					System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inp);
 					continue;
+				}
+				article.title = title;
+				article.body = body;
+
+				System.out.printf("%d번 게시물이 수정되었습니다.\n", inp);
+
+			} else if (command.startsWith("article search ")) {
+				String st = command.split(" ")[2];
+				System.out.println("== 게시물 검색 ==");
+				
+				System.out.println("번호 / 제목");
+				for (int i = 0; i < articlesSize(); i++) {
+					Article article = articles[i];
+					if ((article.title).contains(st) == true) {
+						System.out.printf("%d / %s\n", article.id, article.title);
+					}
+
 				}
 
 			} else if (command.equals("system exit")) {
@@ -154,4 +180,5 @@ public class App {
 		}
 		sc.close();
 	}
+
 }
