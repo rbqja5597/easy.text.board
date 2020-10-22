@@ -3,10 +3,12 @@ package com.sbs.example.easytextboard;
 import java.util.Scanner;
 
 public class App {
+	
 
 	Article[] articles = new Article[3];
 	int num = 0;
 	int articlesCount = 0;
+	int number = 32;
 
 	int articlesSize() {
 		return articlesCount;
@@ -35,6 +37,10 @@ public class App {
 		articlesCount--;
 	}
 
+	private boolean isArticlesFull() {
+		return articlesCount == articles.length;
+	}
+
 	public int getIndexOf(int num) { // ex) 입력된 값 = 1
 		for (int i = 0; i < articlesSize(); i++) {
 			if (num == articles[i].id) { // num = 1 과 articles[i].id 의 값이 같으면
@@ -43,20 +49,46 @@ public class App {
 		}
 		return -1;
 	}
-	
-//	public String regDate() {
+
+	private int add(String title, String body) {
 		
-//	}
+		
+		
+		// 게시물 최대 개수 제한 해제
+
+		if (isArticlesFull()) { 
+			//System.out.printf("== 배열 사이즈 증가(%d => %d) ==\n", articles.length, articles.length * 2);
+
+			Article[] newArticles = new Article[articles.length * 2];
+
+			for (int i = 0; i < articles.length; i++) {
+				newArticles[i] = articles[i];
+
+			}
+
+			articles = newArticles;	
+		}
+		
+
+		Article article = new Article();
+
+		articles[articlesCount] = article;
+
+		article.id = num + 1;
+		article.title = title;
+		article.body = body;
+
+		articlesCount++;
+
+		num = article.id;
+
+		return article.id;
+
+	}
 
 	public void run() {
-
-		// for (int i = 0; i < articles.length; i++) {
-		// articles[i] = new Article();
-		// }
-
+		
 		Scanner sc = new Scanner(System.in);
-
-		int maxArticlesCount = articles.length;
 
 		while (true) {
 
@@ -65,33 +97,19 @@ public class App {
 
 			if (command.equals("article add")) {
 				System.out.println("== 게시물 등록 ==");
-				if (articlesSize() >= maxArticlesCount) {
-					System.out.println("더 이상 추가할 수 없습니다.");
-					continue;
-				}
-
-				int id = num + 1; // 0 + 1
 
 				System.out.printf("제목: ");
 				String title = sc.nextLine();
 				System.out.printf("내용: ");
 				String body = sc.nextLine();
-
+				
+				int id = add(title, body);
+				
 				System.out.printf("%d번 글이 생성되었습니다.\n", id);
 
-				num = id; // id의 값은 num과 같다
-
-				Article article = new Article();
-
-				articles[articlesCount] = article;
-
-				article.id = id;
-				article.title = title;
-				article.body = body;
-
-				articlesCount++;
-
-			} else if (command.equals("article list")) {
+				
+			} else if (command.startsWith("article list ")) {
+				int ip = Integer.parseInt(command.split(" ")[2]);
 				System.out.println("== 게시물 리스트 ==");
 
 				if (articlesSize() == 0) {
@@ -100,13 +118,15 @@ public class App {
 				}
 				System.out.println("번호 / 제목");
 
-				for (int i = articlesSize()-1; i >= 0 ; i--) {
+				for (int i = articlesSize() - 1; i >= 0; i--) {
 
 					Article article = articles[i];
 
-					System.out.printf("%d / %s\n", article.id, article.title);
+						System.out.printf("%d / %s\n", article.id, article.title);
+					}
+					
 
-				}
+				
 
 			} else if (command.startsWith("article detail ")) {
 				int inputedId = Integer.parseInt(command.split(" ")[2]);
@@ -161,12 +181,14 @@ public class App {
 			} else if (command.startsWith("article search ")) {
 				String st = command.split(" ")[2];
 				System.out.println("== 게시물 검색 ==");
-				
-				System.out.println("번호 / 제목");
+
+				System.out.println("번호 / 제목 / 내용");
 				for (int i = 0; i < articlesSize(); i++) {
 					Article article = articles[i];
 					if ((article.title).contains(st) == true) {
-						System.out.printf("%d / %s\n", article.id, article.title);
+						System.out.printf("%d / %s / %s\n", article.id, article.title, article.body);
+					} else if ((article.body).contains(st) == true) {
+						System.out.printf("%d / %s / %s\n", article.id, article.title, article.body);
 					}
 
 				}
