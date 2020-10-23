@@ -117,21 +117,30 @@ public class App {
 				int page = Integer.parseInt(command.split(" ")[2]);
 				System.out.println("== 게시물 리스트 ==");
 
-				
+				if (page <= 1) {
+					page = 1;
+				}
 
 				if (articlesSize() == 0) {
 					System.out.println("게시물이 존재하지 않습니다.");
 					continue;
 				}
-				
+
 				int Inpage = 10;
 				int startPos = articlesSize() - 1;
-				startPos -= (page - 1) * Inpage ;
+				startPos -= (page - 1) * Inpage;
 				int endPos = startPos - (Inpage - 1);
-				
+
 				// 32 23
-						
-				
+
+				if (endPos < 0) {
+					endPos = 0;
+				}
+
+				if (startPos < 0) {
+					System.out.printf("%d페이지는 존재하지 않습니다.\n", page);
+					continue;
+				}
 
 				System.out.println("번호 / 제목");
 
@@ -192,11 +201,54 @@ public class App {
 
 				System.out.printf("%d번 게시물이 수정되었습니다.\n", inp);
 
-			} else if (command.startsWith("article search 1 ")) {
-				String st = command.split(" ")[3];
-				System.out.println("== 게시물 검색 ==");
+			} else if (command.startsWith("article search ")) {
+				int page = Integer.parseInt(command.split(" ")[2]);
+				String search = command.split(" ")[3];
+				System.out.println("== 게시물 리스트 ==");
+				
+				int searchResult = 0;
+				
+				
+				
+				
+				
+				if (page <= 1) {
+					page = 1;
+				}
 
-				System.out.println("번호 / 제목 / 내용");
+				if (articlesSize() == 0) {
+					System.out.println("게시물이 존재하지 않습니다.");
+					continue;
+				}
+
+				int Inpage = 10;
+				int startPos = articlesSize() - 1;
+				startPos -= (page - 1) * Inpage;
+				int endPos = startPos - (Inpage - 1);
+
+				if (endPos < 0) {
+					endPos = 0;
+				}
+
+				if (startPos < 0) {
+					System.out.printf("%d페이지는 존재하지 않습니다.\n", page);
+					continue;
+				}
+
+				System.out.println("번호 / 제목");
+
+				for (int i = startPos; i >= endPos; i--) {
+
+					Article article = articles[i];
+
+					System.out.printf("%d / %s\n", article.id, article.title);
+
+				}
+				
+				
+				// 게시물 검색
+				
+				/*System.out.println("번호 / 제목 / 내용");
 				for (int i = 0; i < articlesSize(); i++) {
 					Article article = articles[i];
 					if ((article.title).contains(st) == true) {
@@ -205,8 +257,7 @@ public class App {
 						System.out.printf("%d / %s / %s\n", article.id, article.title, article.body);
 					}
 
-				}
-
+				}*/
 			} else if (command.equals("system exit")) {
 				System.out.println("== 프로그램 종료 ==");
 				break;
