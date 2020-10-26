@@ -202,7 +202,6 @@ public class App {
 				System.out.printf("%d번 게시물이 수정되었습니다.\n", inp);
 
 			} else if (command.startsWith("article search ")) {
-				  
 				String[] commandBits = command.split(" ");
 				String searchKeyword = command.split(" ")[2];
 
@@ -241,8 +240,8 @@ public class App {
 
 				}
 
-				if (articlesSize() == 0) {
-					System.out.println("게시물이 존재하지 않습니다.");
+				if (searchResultArticles.length == 0) {
+					System.out.println("검색결과가 존재하지 않습니다.");
 					continue;
 				}
 
