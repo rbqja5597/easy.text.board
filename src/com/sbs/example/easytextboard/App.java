@@ -111,7 +111,7 @@ public class App {
 
 				int id = add(title, body);
 
-				System.out.printf("%d번 글이 생성되었습니다.\n", id);
+				System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
 
 			} else if (command.startsWith("article list ")) {
 				int page = Integer.parseInt(command.split(" ")[2]);
@@ -202,18 +202,43 @@ public class App {
 				System.out.printf("%d번 게시물이 수정되었습니다.\n", inp);
 
 			} else if (command.startsWith("article search ")) {
-				int page = Integer.parseInt(command.split(" ")[2]);
-				String search = command.split(" ")[3];
-				System.out.println("== 게시물 리스트 ==");
-				
-				int searchResult = 0;
-				
-				
-				
-				
-				
+				  
+				String[] commandBits = command.split(" ");
+				String searchKeyword = command.split(" ")[2];
+
+				int page = 1;
+
+				if (commandBits.length >= 4) {
+					page = Integer.parseInt(commandBits[3]);
+				}
+
 				if (page <= 1) {
 					page = 1;
+				}
+
+				System.out.println("== 게시물 검색 ==");
+
+				int searchResultArticlesLen = 0;
+
+				for (int i = 0; i < articlesSize(); i++) {
+					Article article = articles[i];
+					if ((article.title).contains(searchKeyword)) {
+						searchResultArticlesLen++;
+					}
+				}
+
+				Article[] searchResultArticles = new Article[searchResultArticlesLen];
+
+				int searchResultArticlesIndex = 0;
+
+				for (int i = 0; i < articles.length; i++) {
+					Article article = articles[i];
+
+					if (article.title.contains(searchKeyword)) {
+						searchResultArticles[searchResultArticlesIndex] = article;
+						searchResultArticlesIndex++;
+					}
+
 				}
 
 				if (articlesSize() == 0) {
@@ -221,8 +246,10 @@ public class App {
 					continue;
 				}
 
+				System.out.println("번호 / 제목");
+
 				int Inpage = 10;
-				int startPos = articlesSize() - 1;
+				int startPos = searchResultArticles.length - 1;
 				startPos -= (page - 1) * Inpage;
 				int endPos = startPos - (Inpage - 1);
 
@@ -235,29 +262,13 @@ public class App {
 					continue;
 				}
 
-				System.out.println("번호 / 제목");
-
 				for (int i = startPos; i >= endPos; i--) {
 
-					Article article = articles[i];
+					Article article = searchResultArticles[i];
 
-					System.out.printf("%d / %s\n", article.id, article.title);
-
+					System.out.printf("%d / %s\n", article.id, article.title, article.body);
 				}
-				
-				
-				// 게시물 검색
-				
-				/*System.out.println("번호 / 제목 / 내용");
-				for (int i = 0; i < articlesSize(); i++) {
-					Article article = articles[i];
-					if ((article.title).contains(st) == true) {
-						System.out.printf("%d / %s / %s\n", article.id, article.title, article.body);
-					} else if ((article.body).contains(st) == true) {
-						System.out.printf("%d / %s / %s\n", article.id, article.title, article.body);
-					}
 
-				}*/
 			} else if (command.equals("system exit")) {
 				System.out.println("== 프로그램 종료 ==");
 				break;
@@ -269,3 +280,15 @@ public class App {
 	}
 
 }
+
+//게시물 검색
+/*
+ * for (int i = 0; i < articlesSize(); i++) { Article article = articles[i]; if
+ * ((article.title).contains(search) == true) {
+ * System.out.printf("%d / %s / %s\n", article.id, article.title, article.body);
+ * } else if ((article.body).contains(search) == true) {
+ * System.out.printf("%d / %s / %s\n", article.id, article.title, article.body);
+ * }
+ * 
+ * }
+ */
