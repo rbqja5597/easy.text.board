@@ -32,4 +32,8 @@ public class MemberService {
 		return memberDao.isJoinAvailabelLoginId(loginId);
 }
 
+	public Member getMemberById(int id) {
+		return memberDao.getMemberById(id);
+	}
+
 }

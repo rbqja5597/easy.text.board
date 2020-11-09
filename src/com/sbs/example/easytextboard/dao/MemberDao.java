@@ -13,9 +13,7 @@ public class MemberDao {
 	public MemberDao() {
 		lastMemberId = 0;
 		members = new ArrayList<>();
-		for (int i = 1; i <= 3; i++) {
-			join("user" + i, "user" + i, "유저" + i);
-		}
+		
 	}
 	
 	public Member getMemberByLoginId(String loginId) {
@@ -60,6 +58,16 @@ public class MemberDao {
 		}
 
 		return true;
+	}
+
+	public Member getMemberById(int id) {
+		for (Member member : members) {
+			if (member.id == id) {
+				return member;
+			}
+		}
+		
+		return null;
 	}
 	
 }

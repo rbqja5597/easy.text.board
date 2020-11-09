@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sbs.example.easytextboard.dto.Article;
+import com.sbs.example.easytextboard.dto.Board;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 public class ArticleDao {
 	private List<Article> articles;
 	private int lastArticleId;
+	private int lastBoard;
+	private List<Board> boards;
 	
 	public List<Article> getArticles() {
 		return articles;
@@ -16,10 +20,9 @@ public class ArticleDao {
 	public ArticleDao() {
 		lastArticleId = 0;
 		articles = new ArrayList<>();
-
-		for (int i = 0; i < 32; i++) {
-			add(i % 2 ==0 ? 1: 2, "제목" + (i + 1), "내용" + (i + 1));
-		}
+		
+		boards = new ArrayList<>();
+		lastBoard =0;	
 	}
 
 	// 게시물관련 시작
@@ -33,14 +36,15 @@ public class ArticleDao {
 		return articles.get(index);
 	}
 
-	public int add(int memberId, String title, String body) {
+	public int add(int boardId, int memberId, String title, String body) {
 
 		Article article = new Article();
-
+		
 		article.id = lastArticleId + 1;
 		article.title = title;
 		article.body = body;
 		article.memberId = memberId;
+		article.boardId = boardId;
 		articles.add(article);
 		lastArticleId = article.id;
 
@@ -77,8 +81,52 @@ public class ArticleDao {
 		return articles.size();
 	}
 	
-	public Article getArticleByIndex( int i) {
+	public Article getArticleByIndex(int i) {
 		return articles.get(i);
-	}	
+	}
+
+	public List<Article> getForPrintArticles(int boardId) {
+		List<Article> newArticles = new ArrayList<>();
+
+		for (Article article : articles) {
+			if (article.boardId == boardId) {
+				newArticles.add(article);
+			}
+		}
+		
+		
+		
+		return newArticles;
+	}
+
+	public int makeBoard(String name) {
+		Board board = new Board();
+		
+		board.id = lastBoard + 1;
+		board.name = name;
+		boards.add(board);
+		
+		lastBoard = board.id;
+
+		return board.id;
+	}
+
+	public Board getBoardById(int id) {
+		for (Board board : boards) {
+			if (board.id == id) {
+				return board;
+			}
+		}
+		return null;
+	}
+
+	public List<Board> getBoards() {
+		return boards;
+	}
+
+
+
+
+
 	
 }
