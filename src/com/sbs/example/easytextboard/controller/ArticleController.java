@@ -41,8 +41,15 @@ public class ArticleController extends Controller {
 			makeBoard(sc, command);
 		} else if (command.startsWith("article selectBoard ")) {
 			selectBoard(sc, command);
+		} else if (command.startsWith("article DB")) {
+			DB(sc, command);
 		} 
 		
+	}
+
+	private void DB(Scanner sc, String command) {
+			
+		articleService.DBManager();
 	}
 
 	private void add(Scanner sc, String command) {
@@ -76,15 +83,19 @@ public class ArticleController extends Controller {
 		
 		int boardId = Container.session.selectedBoardId;
 		Board board = articleService.getBoardById(boardId);
-		List<Article> articles = articleService.getForPrintArticles(boardId);
+		List<Article> articles = articleService.getForPrintArticles();
+		
+		System.out.println("== 게시물 리스트 ==");
 
-		System.out.printf("== %s 게시판 글 리스트 ==\n", board.name);
-		System.out.println("번호 / 작성자 / 제목");
-
+		System.out.println("번호 / 날짜 / 작성자 / 제목 / 조회수\n");
+		
 		for (Article article : articles) {
-			Member member = memberService.getMemberById(article.memberId);
-			System.out.printf("%d / %s / %s\n", article.id, member.name, article.title);
+			System.out.printf("%s / %s / %s / %s / %s\n", article.number, article.regDate, article.nickname , article.titles, article.hit);
+			
+			
 		}
+		
+		System.out.println("\n== DB 리스트 끝 ==");
 
 	}
 

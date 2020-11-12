@@ -8,5 +8,12 @@ public class Article {
 	public String body;
 	public int memberId;
 	
+	// DB
+	public String number;
+	public String titles;
+	public String bodys;
+	public String regDate;
+	public String nickname;
+	public String hit;
 	
 }

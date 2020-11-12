@@ -43,8 +43,9 @@ public class ArticleService {
 		articleDao.remove(id);
 	}
 
-	public List<Article> getForPrintArticles(int boardId) {
-		return articleDao.getForPrintArticles(boardId);
+	public List<Article> getForPrintArticles() {
+		return articleDao.getForPrintArticles();
+		
 	}
 
 	public int makeBoard(String name) {
@@ -63,6 +64,11 @@ public class ArticleService {
 
 	public List<Board> getBoardS() {
 		return articleDao.getBoards();
+	}
+
+	public void DBManager() {
+		articleDao.DBManager();
+		
 	}
 
 }
