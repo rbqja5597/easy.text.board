@@ -2,6 +2,7 @@ package com.sbs.example.easytextboard.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -26,11 +27,8 @@ public class ArticleDao {
 
 	Connection conn = null;
 	Statement state = null;
-
-	public void DBManager() {
-
-		
-	}
+	PreparedStatement pstmt;
+	ResultSet rs;
 
 	public ArticleDao() {
 		lastArticleId = 0;
@@ -65,23 +63,58 @@ public class ArticleDao {
 		article.body = body;
 		article.memberId = memberId;
 		article.boardId = boardId;
-        articles.add(article);
-		
-		
+		articles.add(article);
+
 		articles.add(article);
 		lastArticleId = article.id;
 
 		return article.id;
 	}
 
-	public void remove(int id) {
+	public boolean remove(int id) {
 		int index = getIndexById(id);
+		boolean result = false;
 
-		if (index == -1) {
-			return;
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
+			state = conn.createStatement();
+
+			String sql = "DELETE FROM `article` WHERE id = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, id);
+
+			int r = pstmt.executeUpdate();
+			if (r > 0) {
+				result = true;
+			} else {
+				result = false;
+			}
+
+			pstmt.close();
+			state.close();
+			conn.close();
+		} catch (ClassNotFoundException e) {
+			System.out.println("aaa" + e);
+		} catch (SQLException e) {
+			System.out.println("aaa" + e);
+		} finally {
+			try {
+				if (state != null)
+					state.close();
+			} catch (SQLException ex1) {
+				System.out.println("Error !");
+			}
+
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException ex1) {
+
+			}
 		}
+		return result;
 
-		articles.remove(index);
 	}
 
 	private int getIndexById(int id) {
@@ -94,73 +127,40 @@ public class ArticleDao {
 		return -1;
 	}
 
-	public void modify(int inputedId, String title, String body) {
-		Article article = getArticle(inputedId);
-		article.title = title;
-		article.body = body;
-	}
-
-	public int getArticlesSize() {
-		return articles.size();
-	}
-
-	public Article getArticleByIndex(int i) {
-		return articles.get(i);
-	}
-
-	public List<Article> getForPrintArticles() {
+	public boolean modify(int inputedId, String title, String body) {
+		boolean result = false;
+		int index = getIndexById(inputedId);
+		
+		StringBuilder sql = new StringBuilder();
+     
+        sql.append("UPDATE article SET ")
+            .append("       title=?,")
+            .append("       body=?")
+        	.append("  WHERE id=?");
+		
+		
+		
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
 			state = conn.createStatement();
 
-			String sql;
-			sql = "SELECT * FROM article";
-			ResultSet rs = state.executeQuery(sql);
-
-			while (rs.next()) {
-				String number = rs.getString("id");
-				String regDate = rs.getString("regDate");
-				String titles = rs.getString("title");
-				String bodys = rs.getString("body");
-				String nickname = rs.getString("nickname");
-				String hit = rs.getString("hit");
-				
-				
-				Article article = new Article();
-				
-				article.number = number;
-				article.regDate = regDate;
-				article.titles = titles;
-				article.bodys = bodys;
-				article.nickname = nickname;
-				article.hit = hit;
-				articles.add(article);
+			//String sql = "UPDATE article SET title = ? WHERE `body` = ?";
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.setString(1, title);
+			pstmt.setString(2, body);
+			pstmt.setInt(3, inputedId);
+			
+			int r = pstmt.executeUpdate();
+			if (r > 0) {
+				result = true;
+			} else {
+				result = false;
 			}
 			
-			
-			/*
-			 * String insertsql; insertsql =
-			 * "INSERT INTO `article` VALUES ('','NOW()', '제목8', '내용8', '김규범', '15')";
-			 * 
-			 * state.executeUpdate(insertsql); ResultSet rs2 = state.executeQuery(sql);
-			 * 
-			 * while (rs2.next()) { String number = rs2.getString("id"); String regDate =
-			 * rs2.getString("regDate"); String titles = rs2.getString("title"); String
-			 * bodys = rs2.getString("body"); String nickname = rs2.getString("nickname");
-			 * String hit = rs2.getString("hit");
-			 * 
-			 * 
-			 * Article article = new Article();
-			 * 
-			 * article.number = number; article.regDate = regDate; article.titles = titles;
-			 * article.bodys = bodys; article.nickname = nickname; article.hit = hit;
-			 * articles.add(article); }
-			 */
-		
 		
 
-			rs.close();
+			pstmt.close();
 			state.close();
 			conn.close();
 		} catch (ClassNotFoundException e) {
@@ -182,10 +182,88 @@ public class ArticleDao {
 
 			}
 		}
-		return articles;
-		
-		
+		return result;
+	}
 
+	public int getArticlesSize() {
+		return articles.size();
+	}
+
+	public Article getArticleByIndex(int i) {
+		return articles.get(i);
+	}
+
+	public List<Article> getForPrintArticles() {
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
+			state = conn.createStatement();
+
+			String sql;
+			sql = "SELECT * FROM `article`";
+			ResultSet rs = state.executeQuery(sql);
+
+			while (rs.next()) {
+				String number = rs.getString("id");
+				String regDate = rs.getString("regDate");
+				String titles = rs.getString("title");
+				String bodys = rs.getString("body");
+				String nickname = rs.getString("nickname");
+				String hit = rs.getString("hit");
+
+				Article article = new Article();
+
+				article.number = number;
+				article.regDate = regDate;
+				article.titles = titles;
+				article.bodys = bodys;
+				article.nickname = nickname;
+				article.hit = hit;
+				articles.add(article);
+			}
+
+			/*
+			 * String insertsql; insertsql =
+			 * "INSERT INTO `article` VALUES ('','NOW()', '제목8', '내용8', '김규범', '15')";
+			 * 
+			 * state.executeUpdate(insertsql); ResultSet rs2 = state.executeQuery(sql);
+			 * 
+			 * while (rs2.next()) { String number = rs2.getString("id"); String regDate =
+			 * rs2.getString("regDate"); String titles = rs2.getString("title"); String
+			 * bodys = rs2.getString("body"); String nickname = rs2.getString("nickname");
+			 * String hit = rs2.getString("hit");
+			 * 
+			 * 
+			 * Article article = new Article();
+			 * 
+			 * article.number = number; article.regDate = regDate; article.titles = titles;
+			 * article.bodys = bodys; article.nickname = nickname; article.hit = hit;
+			 * articles.add(article); }
+			 */
+
+			rs.close();
+			state.close();
+			conn.close();
+		} catch (ClassNotFoundException e) {
+			System.out.println("aaa" + e);
+		} catch (SQLException e) {
+			System.out.println("aaa" + e);
+		} finally {
+			try {
+				if (state != null)
+					state.close();
+			} catch (SQLException ex1) {
+				System.out.println("Error !");
+			}
+
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException ex1) {
+
+			}
+		}
+		return articles;
 
 	}
 

@@ -41,16 +41,9 @@ public class ArticleController extends Controller {
 			makeBoard(sc, command);
 		} else if (command.startsWith("article selectBoard ")) {
 			selectBoard(sc, command);
-		} else if (command.startsWith("article DB")) {
-			DB(sc, command);
 		} 
-		
 	}
 
-	private void DB(Scanner sc, String command) {
-			
-		articleService.DBManager();
-	}
 
 	private void add(Scanner sc, String command) {
 		System.out.println("== 게시물 등록 ==");
@@ -80,9 +73,7 @@ public class ArticleController extends Controller {
 
 	private void list(Scanner sc, String command) {
 		int page = Integer.parseInt(command.split(" ")[2]);
-		
-		int boardId = Container.session.selectedBoardId;
-		Board board = articleService.getBoardById(boardId);
+
 		List<Article> articles = articleService.getForPrintArticles();
 		
 		System.out.println("== 게시물 리스트 ==");
@@ -91,8 +82,6 @@ public class ArticleController extends Controller {
 		
 		for (Article article : articles) {
 			System.out.printf("%s / %s / %s / %s / %s\n", article.number, article.regDate, article.nickname , article.titles, article.hit);
-			
-			
 		}
 		
 		System.out.println("\n== DB 리스트 끝 ==");
@@ -125,22 +114,14 @@ public class ArticleController extends Controller {
 	}
 
 	private void modify(Scanner sc, String command) {
-		if (Container.session.isLogout()) {
-			System.out.println("로그인 후 이용해주세요.");
-			return;
-		}
+		
 
 		System.out.println("== 게시물 수정 ==");
 
 		int inputedId = Integer.parseInt(command.split(" ")[2]);
 		Article article = articleService.getArticle(inputedId);
 
-		if (article == null) {
-			System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
-			return;
-		}
-
-		System.out.printf("번호 : %d\n", article.id);
+	
 		System.out.printf("제목 : ");
 		String title = sc.nextLine();
 		System.out.printf("내용 : ");
@@ -155,19 +136,7 @@ public class ArticleController extends Controller {
 	private void delete(Scanner sc, String command) {
 		System.out.println("== 게시물 삭제 ==");
 
-		if (Container.session.isLogout()) {
-			System.out.println("로그인 후 이용해주세요.");
-			return;
-		}
-
 		int inputedId = Integer.parseInt(command.split(" ")[2]);
-
-		Article article = articleService.getArticle(inputedId);
-
-		if (article == null) {
-			System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
-			return;
-		}
 
 		articleService.remove(inputedId);
 

@@ -66,9 +66,6 @@ public class ArticleService {
 		return articleDao.getBoards();
 	}
 
-	public void DBManager() {
-		articleDao.DBManager();
-		
-	}
+	
 
 }
