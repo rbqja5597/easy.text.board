@@ -15,8 +15,8 @@ public class ArticleService {
 		articleDao = Container.articleDao;
 	}
 
-	public int add(int boardId, int memberId, String title, String body) {
-		return articleDao.add(boardId, memberId, title, body);
+	public int add(String nickname, String title, String body) {
+		return articleDao.add(nickname, title, body);
 	}
 
 	public List<Article> getArticles() {
@@ -39,8 +39,8 @@ public class ArticleService {
 		articleDao.modify(inputedId, title, body);
 	}
 
-	public void remove(int id) {
-		articleDao.remove(id);
+	public boolean remove(int id) {
+		return articleDao.remove(id);
 	}
 
 	public List<Article> getForPrintArticles() {
@@ -64,6 +64,11 @@ public class ArticleService {
 
 	public List<Board> getBoardS() {
 		return articleDao.getBoards();
+	}
+
+	public Article detail(int inputedId) {
+		return articleDao.detail(inputedId);
+		
 	}
 
 	

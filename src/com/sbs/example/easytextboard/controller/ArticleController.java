@@ -48,24 +48,22 @@ public class ArticleController extends Controller {
 	private void add(Scanner sc, String command) {
 		System.out.println("== 게시물 등록 ==");
 
-		if (Container.session.isLogout()) {
-			System.out.println("로그인 후 이용해주세요.");
-			return;
-		}
-
 		String title;
 		String body;
+		String nickname;
 
 		System.out.printf("제목 : ");
 		title = sc.nextLine();
 		System.out.printf("내용 : ");
 		body = sc.nextLine();
+		System.out.printf("작성자 : ");
+		nickname = sc.nextLine();
 
-		int boardId = Container.session.selectedBoardId;
-		int memberId = Container.session.loginedMemberId;
-
-
-		int id = articleService.add(boardId, memberId, title, body);
+		//int boardId = Container.session.selectedBoardId;
+		//int memberId = Container.session.loginedMemberId;
+		
+		
+		int id = articleService.add(nickname, title, body);
 
 		System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
 
@@ -89,28 +87,26 @@ public class ArticleController extends Controller {
 	}
 
 	private void detail(Scanner sc, String command) {
-		int inputedId = 0;
-
-		try {
-			inputedId = Integer.parseInt(command.split(" ")[2]);
-		} catch (NumberFormatException e) {
-			System.out.println("게시물 번호를 양의 정수로 입력해주세요.");
-			return;
-		}
+		int inputedId = Integer.parseInt(command.split(" ")[2]);
+		
 
 		System.out.println("== 게시물 상세 ==");
 
-		Article article = articleService.getArticle(inputedId);
-
+		Article article = articleService.detail(inputedId);
+		
 		if (article == null) {
-			System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
+			System.out.println("존재하지 않는 게시물입니다.");
 			return;
 		}
+		
+		
+		System.out.printf("번호 : %s\n", article.number);
+		System.out.printf("제목 : %s\n", article.titles);
+		System.out.printf("내용 : %s\n", article.bodys);
+		
+		
 
-		System.out.printf("번호 : %d\n", article.id);
-		System.out.printf("제목 : %s\n", article.title);
-		System.out.printf("내용 : %s\n", article.body);
-
+		
 	}
 
 	private void modify(Scanner sc, String command) {
@@ -135,9 +131,9 @@ public class ArticleController extends Controller {
 
 	private void delete(Scanner sc, String command) {
 		System.out.println("== 게시물 삭제 ==");
-
+		
 		int inputedId = Integer.parseInt(command.split(" ")[2]);
-
+		
 		articleService.remove(inputedId);
 
 		System.out.printf("%d번 게시물이 삭제되었습니다.\n", inputedId);

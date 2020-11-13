@@ -29,6 +29,7 @@ public class ArticleDao {
 	Statement state = null;
 	PreparedStatement pstmt;
 	ResultSet rs;
+	private boolean result;
 
 	public ArticleDao() {
 		lastArticleId = 0;
@@ -54,25 +55,106 @@ public class ArticleDao {
 		return articles.get(index);
 	}
 
-	public int add(int boardId, int memberId, String title, String body) {
+	public int add(String nickname, String title, String body) {
+		int id = 0;
+		
+		String insertsql = "INSERT INTO article";
+		insertsql +=  "SET title = ?";
+		insertsql +=  ",body = ?";
+		insertsql +=  ",nickname = ?";
 
-		Article article = new Article();
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
+			conn.prepareStatement(insertsql, Statement.RETURN_GENERATED_KEYS);
+			
+			pstmt.setString(1, title);
+			pstmt.setString(2, body);
+			pstmt.setString(3, nickname);
+			pstmt.executeUpdate();
+			
+			rs = pstmt.getGeneratedKeys();
+			rs.next();
+			id = rs.getInt(1);
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("aaa" + e);
+		} catch (SQLException e) {
+			System.out.println("aaa" + e);
+		} finally {
+			try {
+				if (state != null)
+					state.close();
+			} catch (SQLException ex1) {
+				System.out.println("Error !");
+			}
 
-		article.id = lastArticleId + 1;
-		article.title = title;
-		article.body = body;
-		article.memberId = memberId;
-		article.boardId = boardId;
-		articles.add(article);
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException ex1) {
 
-		articles.add(article);
-		lastArticleId = article.id;
+			}
+		}
+		return id;
+	}
 
-		return article.id;
+	public Article detail(int inputedId) {
+		Article article = null;
+
+		String sql = "SELECT * from article WHERE id=?";
+
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
+			state = conn.createStatement();
+
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, inputedId);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				String number = rs.getString("id");
+				String regDate = rs.getString("regDate");
+				String titles = rs.getString("title");
+				String bodys = rs.getString("body");
+				String nickname = rs.getString("nickname");
+				String hit = rs.getString("hit");
+
+				article = new Article();
+
+				article.number = number;
+				article.regDate = regDate;
+				article.titles = titles;
+				article.bodys = bodys;
+				article.nickname = nickname;
+				article.hit = hit;
+				articles.add(article);
+			}
+
+		} catch (ClassNotFoundException e) {
+			System.out.println("aaa" + e);
+		} catch (SQLException e) {
+			System.out.println("aaa" + e);
+		} finally {
+			try {
+				if (state != null)
+					state.close();
+			} catch (SQLException ex1) {
+				System.out.println("Error !");
+			}
+
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException ex1) {
+
+			}
+		}
+		return article;
 	}
 
 	public boolean remove(int id) {
-		int index = getIndexById(id);
 		boolean result = false;
 
 		try {
@@ -80,16 +162,11 @@ public class ArticleDao {
 			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
 			state = conn.createStatement();
 
-			String sql = "DELETE FROM `article` WHERE id = ?";
+			String sql = "DELETE FROM article WHERE id = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, id);
 
 			int r = pstmt.executeUpdate();
-			if (r > 0) {
-				result = true;
-			} else {
-				result = false;
-			}
 
 			pstmt.close();
 			state.close();
@@ -130,43 +207,31 @@ public class ArticleDao {
 	public boolean modify(int inputedId, String title, String body) {
 		boolean result = false;
 		int index = getIndexById(inputedId);
-		
+
 		StringBuilder sql = new StringBuilder();
-     
-        sql.append("UPDATE article SET ")
-            .append("       title=?,")
-            .append("       body=?")
-        	.append("  WHERE id=?");
-		
-		
-		
+
+		sql.append("UPDATE article SET ").append("       title=?,").append("       body=?").append("  WHERE id=?");
+
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
 			state = conn.createStatement();
 
-			//String sql = "UPDATE article SET title = ? WHERE `body` = ?";
+			// String sql = "UPDATE article SET title = ? WHERE `body` = ?";
 			pstmt = conn.prepareStatement(sql.toString());
 			pstmt.setString(1, title);
 			pstmt.setString(2, body);
 			pstmt.setInt(3, inputedId);
-			
+
 			int r = pstmt.executeUpdate();
-			if (r > 0) {
-				result = true;
-			} else {
-				result = false;
-			}
-			
-		
 
 			pstmt.close();
 			state.close();
 			conn.close();
 		} catch (ClassNotFoundException e) {
-			System.out.println("aaa"+ e);
+			System.out.println("aaa" + e);
 		} catch (SQLException e) {
-			System.out.println("aaa"+ e);
+			System.out.println("aaa" + e);
 		} finally {
 			try {
 				if (state != null)
@@ -222,24 +287,6 @@ public class ArticleDao {
 				articles.add(article);
 			}
 
-			/*
-			 * String insertsql; insertsql =
-			 * "INSERT INTO `article` VALUES ('','NOW()', '제목8', '내용8', '김규범', '15')";
-			 * 
-			 * state.executeUpdate(insertsql); ResultSet rs2 = state.executeQuery(sql);
-			 * 
-			 * while (rs2.next()) { String number = rs2.getString("id"); String regDate =
-			 * rs2.getString("regDate"); String titles = rs2.getString("title"); String
-			 * bodys = rs2.getString("body"); String nickname = rs2.getString("nickname");
-			 * String hit = rs2.getString("hit");
-			 * 
-			 * 
-			 * Article article = new Article();
-			 * 
-			 * article.number = number; article.regDate = regDate; article.titles = titles;
-			 * article.bodys = bodys; article.nickname = nickname; article.hit = hit;
-			 * articles.add(article); }
-			 */
 
 			rs.close();
 			state.close();
